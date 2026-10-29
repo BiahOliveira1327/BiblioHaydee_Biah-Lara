@@ -1,6 +1,9 @@
+
 package br.escola.bibliohaydee.model;
 
 public class Usuario {
+
+    public static final int LIMITE_PADRAO = 3;
 
     private String nome;
     private String matricula;
@@ -17,12 +20,21 @@ public class Usuario {
             throw new IllegalArgumentException("O tipo deve ser ALUNO ou PROFESSOR.");
         }
 
-        nome = nomeUsuario;
-        matricula = matriculaUsuario;
-        tipo = tipoUsuario;
-        limiteEmprestimos = limiteUsuario;
-        emprestimosAtivos = 0;
+        if (limiteUsuario == null || limiteUsuario < 1) {
+            throw new IllegalArgumentException("O limite deve ser maior que zero.");
+        }
+
+        this.nome = nomeUsuario.trim();
+        this.matricula = matriculaUsuario;
+        this.tipo = tipoUsuario;
+        this.limiteEmprestimos = limiteUsuario;
+        this.emprestimosAtivos = 0;
     }
+
+    public Usuario(String nome, String matricula, String tipo) {
+        this(nome, matricula, tipo, LIMITE_PADRAO);
+    }
+
     public String getNome() {
         return nome;
     }
@@ -41,5 +53,23 @@ public class Usuario {
 
     public Integer getEmprestimosAtivos() {
         return emprestimosAtivos;
+    }
+
+    public boolean setNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            return false;
+        }
+
+        this.nome = nome.trim();
+        return true;
+    }
+
+    public boolean setLimiteEmprestimos(int limiteEmprestimos) {
+        if (limiteEmprestimos < 1) {
+            return false;
+        }
+
+        this.limiteEmprestimos = limiteEmprestimos;
+        return true;
     }
 }

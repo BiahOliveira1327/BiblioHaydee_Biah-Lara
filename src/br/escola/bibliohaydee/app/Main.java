@@ -33,6 +33,16 @@ public class Main {
         );
 
         livros.add(livro);
+
+        Livro livroSemGenero = new Livro(
+                "Livro de Teste",
+                "123456789",
+                autor,
+                2024
+        );
+
+        livros.add(livroSemGenero);
+
         autores.add(autor);
 
         System.out.println("=== CADASTRO DE USUÁRIO ===");
@@ -64,15 +74,41 @@ public class Main {
 
         } while (!tipo.equals("ALUNO") && !tipo.equals("PROFESSOR"));
 
-        System.out.print("Limite de empréstimos: ");
-        Integer limiteEmprestimos = Integer.parseInt(scanner.nextLine());
+        System.out.print("Definir o limite? (S/N): ");
+        String definirLimite = scanner.nextLine().toUpperCase();
 
-        Usuario usuario = new Usuario(
-                nome,
-                matricula,
-                tipo,
-                limiteEmprestimos
-        );
+        Usuario usuario;
+
+        if (definirLimite.equals("S")) {
+
+            System.out.print("Limite de empréstimos: ");
+
+            int limiteEmprestimos;
+
+            while (true) {
+                try {
+                    limiteEmprestimos = Integer.parseInt(scanner.nextLine());
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.print("Digite um número válido: ");
+                }
+            }
+
+            usuario = new Usuario(
+                    nome,
+                    matricula,
+                    tipo,
+                    limiteEmprestimos
+            );
+
+        } else {
+
+            usuario = new Usuario(
+                    nome,
+                    matricula,
+                    tipo
+            );
+        }
 
         usuarios.add(usuario);
 
@@ -82,6 +118,73 @@ public class Main {
         System.out.println("Tipo: " + usuario.getTipo());
         System.out.println("Limite de empréstimos: " + usuario.getLimiteEmprestimos());
         System.out.println("Empréstimos ativos: " + usuario.getEmprestimosAtivos());
+
+        System.out.print("\nDigite a matrícula do usuário que deseja alterar: ");
+        String matriculaAlteracao = scanner.nextLine();
+
+        Usuario usuarioEncontrado = buscarUsuario(usuarios, matriculaAlteracao);
+
+        if (usuarioEncontrado == null) {
+
+            System.out.println("Usuário não localizado. Nenhuma alteração feita.");
+
+        } else {
+
+            System.out.println("Usuário encontrado: " + usuarioEncontrado.getNome());
+
+            System.out.println("1 - Alterar nome");
+            System.out.println("2 - Alterar limite");
+
+            System.out.print("Escolha uma opção: ");
+
+            int opcao;
+
+            while (true) {
+                try {
+                    opcao = Integer.parseInt(scanner.nextLine());
+                    break;
+                } catch (NumberFormatException e) {
+                    System.out.print("Digite uma opção válida: ");
+                }
+            }
+
+            if (opcao == 1) {
+
+                System.out.print("Novo nome: ");
+                String novoNome = scanner.nextLine();
+
+                if (usuarioEncontrado.setNome(novoNome)) {
+                    System.out.println("Nome alterado com sucesso.");
+                } else {
+                    System.out.println("Nome inválido. Nenhuma alteração feita.");
+                }
+
+            } else if (opcao == 2) {
+
+                System.out.print("Novo limite: ");
+
+                int novoLimite;
+
+                while (true) {
+                    try {
+                        novoLimite = Integer.parseInt(scanner.nextLine());
+                        break;
+                    } catch (NumberFormatException e) {
+                        System.out.print("Digite um número válido: ");
+                    }
+                }
+
+                if (usuarioEncontrado.setLimiteEmprestimos(novoLimite)) {
+                    System.out.println("Limite alterado com sucesso.");
+                } else {
+                    System.out.println("Limite inválido. Nenhuma alteração feita.");
+                }
+
+            } else {
+
+                System.out.println("Opção inválida. Nenhuma alteração feita.");
+            }
+        }
 
         System.out.println("\n=== ACERVO ===");
 
@@ -94,5 +197,16 @@ public class Main {
         }
 
         scanner.close();
+    }
+
+    public static Usuario buscarUsuario(List<Usuario> usuarios, String matricula) {
+
+        for (Usuario usuario : usuarios) {
+            if (usuario.getMatricula().equals(matricula)) {
+                return usuario;
+            }
+        }
+
+        return null;
     }
 }
